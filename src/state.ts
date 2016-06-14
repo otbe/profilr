@@ -1,3 +1,4 @@
+import { ProfileOptions } from './api';
 export interface State {
   enabled: boolean;
   listeners: Array<EventCallback>;
@@ -12,7 +13,7 @@ export interface PerformanceEvent {
   label: string;
   duration: number;
   result: any;
-  custom?: Object
+  options?: ProfileOptions
 }
 
 export interface EventCallback {

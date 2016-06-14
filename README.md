@@ -17,14 +17,17 @@ You have to add a consumer for this events. See the ```Consumers``` section.
 Its written in TypeScript and typings are available. It can be used with TypeScript decorators and babel decorators.
 
 ```javascript
-import { profile, useProfilr } from 'profilr'
+import { profile, useProfilr } from 'profilr';
 
 useProfilr(true);
 
 class MyService {
   constructor() {
-    const getNumberOfRows = profile(() => 5, { label: 'getNumberOfRows' }); // will be reported as 'getNumberOfRows'
-    const getNumberOfColumns = profile(function getNumberOfColumns() { return 5 }); // will be reported as 'getNumberOfColumns'
+    // will be reported as 'getNumberOfRows'
+    const getNumberOfRows = profile(() => 5, 'getNumberOfRows');
+
+    // will be reported as 'getNumberOfColumns'
+    const getNumberOfColumns = profile(function getNumberOfColumns() { return 5 });
   }
 
   @profile() // will be reported as 'expensiveComputation'
@@ -32,15 +35,17 @@ class MyService {
     return 1*1;
   }
 
-  @profile({ label: 'fetchUsers' }) // will be reported as 'fetchUsers'
+  @profile('fetchUsers', { custom: 'foo' }) // will be reported as 'fetchUsers' and with custom data
   remoteApiCall (): number {
     return new Promise((resolve) => resolve(5));
   }
 }
 ```
+See tests for more usage information.
 
 ##Consumers
-
+First consumer will be a react devtool like known from redux and mobx, but its not finished yet.
+Stay tuned!
 
 ##API
 All functions are available at the top level import.
@@ -48,29 +53,32 @@ All functions are available at the top level import.
 ###useProfilr
 ```useProfilr(active: boolean)```
 Enables or disable *profilr*. The decorated or wrapped functions will still have some logic from *profilr*, but the overhead
-is negligibly.
+is negligible.
 
 ###profile
 Function wrappers:
-```
-function profile<T extends Function> (fn: T): T
-function profile<T extends Function> (fn: T, custom: Object): T
-function profile<T extends Function> (fn: T, label: string, custom?: Object): T
+```javascript
+function profile<T extends Function> (fn: T): T;
+function profile<T extends Function> (fn: T, label: string): T;
+function profile<T extends Function> (fn: T, options: ProfileOptions): T;
+function profile<T extends Function> (fn: T, label: string, options: ProfileOptions): T;
 ```
 
 ```fn``` is the function to be profiled.
 ```label``` is a string that will be used to identify the function. In most cases this needed,
 but *profilr* will try to infer this from the function name. See ```Usage```
-```custom``` is an object that will be passed to the consumer.
+```options``` is a configuration object. For now it only holds a ```custom``` field, which can be used to send custom data to a consumer.
 
 Class method decorators:
-```
+```javascript
 function profile (): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
-function profile (custom: Object): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
-function profile (label: string, custom?: Object): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+function profile (label: string): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+function profile (options: ProfileOptions): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+function profile (label: string, options: ProfileOptions): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+
 ```
 
-Same as for function wrappers, but this time ```label``` is not needed, because *profilr* will infer this
+Same as for function wrappers, but this time ```label``` is not needed at most times, because *profilr* will infer this
 from the method name.
 
 ###registerEventCallback
@@ -85,7 +93,9 @@ looks like this example:
   label: 'getArray', // label (name) of function
   duration: 50,      // duraiton in ms
   result: [],        // result of this call
-  custom: custom     // custom data
+  options: {
+    custom: 'test' // custom data
+  }
 }
 ```
 

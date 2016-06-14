@@ -10,19 +10,19 @@ export interface ProfileOptions {
 
 // class method decorators
 
-export function profile<T extends Function> (fn: T, label: string, custom: ProfileOptions): T;
+export function profile<T extends Function> (fn: T, label: string, options: ProfileOptions): T;
 
-export function profile<T extends Function> (fn: T, custom: ProfileOptions): T;
+export function profile<T extends Function> (fn: T, options: ProfileOptions): T;
 
 export function profile<T extends Function> (fn: T, label: string): T;
 
-export function profile (label: string, custom: ProfileOptions): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+export function profile (label: string, options: ProfileOptions): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 
 export function profile<T extends Function> (fn: T): T;
 
 export function profile (label: string): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 
-export function profile (custom: ProfileOptions): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+export function profile (options: ProfileOptions): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 
 export function profile (): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 
@@ -65,7 +65,7 @@ export function profile (arg1?: any, arg2?: any, arg3?: any): any {
   }
 }
 
-function makeDecorator (label: string, custom?: Object) {
+function makeDecorator (label: string, options?: ProfileOptions) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor => {
     let fn = target[ propertyKey ];
 
@@ -82,24 +82,24 @@ function makeDecorator (label: string, custom?: Object) {
         }
 
         return function() {
-          return measure(label || propertyKey, fn, this, arguments, custom);
+          return measure(label || propertyKey, fn, this, arguments, options);
         }
       }
     };
   }
 }
 
-function executeWrapped<T extends Function> (fn: T, label: string, custom?: Object) {
+function executeWrapped<T extends Function> (fn: T, label: string, options?: ProfileOptions) {
   return function() {
     if (!state.enabled) {
       return fn.apply(this, arguments);
     }
 
-    return measure(label || fn.name || 'anonymous function', fn, this, arguments, custom);
+    return measure(label || fn.name || 'anonymous function', fn, this, arguments, options);
   }
 }
 
-function measure (key: string, fn: Function, context: Object, args: IArguments, custom: Object): any {
+function measure (key: string, fn: Function, context: Object, args: IArguments, options: ProfileOptions): any {
   const start = new Date().getTime();
   const result = fn.apply(context, args);
 
@@ -109,7 +109,7 @@ function measure (key: string, fn: Function, context: Object, args: IArguments, 
         label: key,
         duration: new Date().getTime() - start,
         result: res,
-        custom
+        options
       });
       return res;
     });
@@ -118,7 +118,7 @@ function measure (key: string, fn: Function, context: Object, args: IArguments, 
       label: key,
       duration: new Date().getTime() - start,
       result: result,
-      custom
+      options
     });
   }
 

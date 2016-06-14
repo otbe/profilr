@@ -2,7 +2,7 @@ import expect, { createSpy } from 'expect';
 import { profile } from '../src/api';
 import { registerEventCallback, useProfilr } from '../src/state';
 
-const custom = {
+const options = {
   custom: {
     myData: 'string'
   }
@@ -26,7 +26,7 @@ class Test {
     return this.counter;
   }
 
-  @profile(custom)
+  @profile(options)
   customOptions() {
     return this.counter;
   }
@@ -36,7 +36,7 @@ class Test {
     return this.counter;
   }
 
-  @profile('other', custom)
+  @profile('other', options)
   namedAndCustomized() {
     return this.counter;
   }
@@ -88,7 +88,7 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[0].arguments[0]).toInclude({ label: 'other', result: 5, custom });
+    expect(listener.calls[0].arguments[0]).toInclude({ label: 'other', result: 5, options });
 
     listener.reset();
 
@@ -98,7 +98,7 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[0].arguments[0]).toInclude({ label: 'customOptions', result: 5, custom });
+    expect(listener.calls[0].arguments[0]).toInclude({ label: 'customOptions', result: 5, options });
   });
 
   it('should let me decorate async class methods', async () => {
@@ -152,7 +152,7 @@ describe('profilr@TS', () => {
 
     listener.reset();
 
-    const customizedFn = profile(() => 5, custom);
+    const customizedFn = profile(() => 5, options);
 
     expect(listener).toNotHaveBeenCalled();
     expect(customizedFn()).toBe(5);
@@ -160,11 +160,11 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[0].arguments[0]).toInclude({ label: 'anonymous function', result: 5, custom });
+    expect(listener.calls[0].arguments[0]).toInclude({ label: 'anonymous function', result: 5, options });
 
     listener.reset();
 
-    const customizedNamedFn = profile(() => 5, 'other', custom);
+    const customizedNamedFn = profile(() => 5, 'other', options);
 
     expect(listener).toNotHaveBeenCalled();
     expect(customizedNamedFn()).toBe(5);
@@ -172,7 +172,7 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[0].arguments[0]).toInclude({ label: 'other', result: 5, custom });
+    expect(listener.calls[0].arguments[0]).toInclude({ label: 'other', result: 5, options });
   });
 
   it('should let me disable profile at all', async () => {
