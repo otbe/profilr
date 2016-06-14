@@ -64,10 +64,12 @@ function profile<T extends Function> (fn: T, options: ProfileOptions): T;
 function profile<T extends Function> (fn: T, label: string, options: ProfileOptions): T;
 ```
 
-```fn``` is the function to be profiled.
-```label``` is a string that will be used to identify the function. In most cases this needed,
-but *profilr* will try to infer this from the function name. See ```Usage```
-```options``` is a configuration object. For now it only holds a ```custom``` field, which can be used to send custom data to a consumer.
+Parameter | Description
+------------ | -------------
+```fn``` | Function to be profiled
+```label``` | String that will be used to identify the function. In most cases this needed,
+but *profilr* will try to infer this from the function name.
+```options``` | Configuration object. For now it only holds a ```custom``` field, which can be used to send custom data to a consumer.
 
 Class method decorators:
 ```javascript
