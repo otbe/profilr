@@ -4,9 +4,17 @@ node_js:
 install:
   - npm install
   - chmod +x scripts/*.sh
-  - ./node_modules/.bin/typings install
+  - "./node_modules/.bin/typings install"
 script: npm run test-travis
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 before_deploy:
   - npm run build
+deploy:
+  provider: npm
+  email: benjamin.otto@style-systems.de
+  api_key:
+    secure: R4Gthfr0xrRoyQSEyLy9VykjcSCVWoO0rbXu56MIdiQNe0h+7TLDbxj2kYx8odo8yyOouSUwDofYB7cRNFnAJv8BYbGu5nZ0Ho0o91ilpuLTvbCYATOYR+P3UhEHGXPggTBGuLFhUkkKuTAc5HKfxiOJ3oQ4pJi5Ssq91FeWm2QuNIoMYckv4Kp8LFapAxDQnWWs84e2wVHk5zzzTLrIyxSBcOebvriiHM6ILmM0AV5ronwE+AjAVwQD2lrac8pdGwxGMEDF0sLHS/QufUqpQcelr6PXx61QB59x8xDVpPycjdiepICwPfbdV/5PG03I65fZtAc1Ou8LFCoporGxlOfW5W+oRIXfXsl8EBYNS02355wWu/rivkLRscAxv5gkCSaguJ2TW4EYoiWyVJmcXzswu0zMbwwej8uEedtF88jspwIQ8O14B+mPeFNWSnHuAJsmu1RPK467V3Sx8DR8Aj5WzuUtquQqIg7LWSqznnmfnXIeWKRYzTeEkIUHjD279NJG+gDXOb9hB1E3Y1GwKDBDI0TClQXBijT7aIidhkIdirVa5Wmivv/cw/JewsP+aMLNljDCR34eGSyS9cHUNOXHnrZHbLVZ58m2sxQm/nteqvz90u1zWo3O/gNlXPrjV8RX1aM54fshIu0k5YFMXmR3imZuzq4jCLqiuKBss3c=
+  on:
+    tags: true
+    repo: otbe/profilr
