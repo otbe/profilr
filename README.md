@@ -11,7 +11,7 @@ You have to add a consumer for this events. See the ```Consumers``` section.
 
 ##Install
 
-```npm i profilr --save-dev```
+```npm i profilr --save```
 
 ##Usage
 Its written in TypeScript and typings are available. It can be used with TypeScript decorators and babel decorators.

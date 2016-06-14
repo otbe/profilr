@@ -8,22 +8,16 @@ export interface ProfileOptions {
   custom: any;
 }
 
-// class method decorators
-
+// function wrapper
 export function profile<T extends Function> (fn: T, label: string, options: ProfileOptions): T;
-
 export function profile<T extends Function> (fn: T, options: ProfileOptions): T;
-
 export function profile<T extends Function> (fn: T, label: string): T;
-
-export function profile (label: string, options: ProfileOptions): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
-
 export function profile<T extends Function> (fn: T): T;
 
-export function profile (label: string): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
-
+// class method decorator
+export function profile (label: string, options: ProfileOptions): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 export function profile (options: ProfileOptions): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
-
+export function profile (label: string): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 export function profile (): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 
 export function profile (arg1?: any, arg2?: any, arg3?: any): any {
