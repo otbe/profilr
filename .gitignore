@@ -1,0 +1,6 @@
+generated/
+.idea/
+node_modules/
+typings/
+coverage/
+dist/

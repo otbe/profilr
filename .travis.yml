@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - '5'
+install:
+  - npm install
+  - chmod +x scripts/*.sh
+  - ./node_modules/.bin/typings install
+script: npm run test-travis
+after_success:
+  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+before_deploy:
+  - npm run build

@@ -1,0 +1,12 @@
+generated/
+.idea/
+build/
+node_modules/
+typings/
+coverage/
+scripts/
+webpack-test.config.js
+webpack.config.js
+.travis.yml
+.babelrc
+.editorconfig
