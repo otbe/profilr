@@ -80,7 +80,7 @@ function profile (label: string, options: ProfileOptions): (target: any, propert
 Parameter | Description
 ------------ | -------------
 ```fn``` | Function to be profiled
-```label``` | String that will be used to identify the function. In most cases this needed, but *profilr* will try to infer this from the function name.
+```label``` | Consumers can group several functions based on this string.
 ```options``` | Configuration object. For now it only holds a ```custom``` field, which can be used to send custom data to a consumer.
 ###registerEventCallback
 ```
@@ -89,13 +89,15 @@ function registerEventCallback(cb: EventCallback): () => void
 Registers a callback for events produced by *profilr*. It returns a dispose function.
 Only one parameter will be passed to the callback and it looks like this example:
 
-```
+```javascript
 {
-  label: 'getArray', // label (name) of function
-  duration: 50,      // duraiton in ms
-  result: [],        // result of this call
+  id: 1,                            // each profiled function has an unique id
+  fnName: 'map',                    // inferred name of function
+  label: 'Part of Array prototype', // label
+  duration: 50,                     // duraiton in ms
+  result: [],                       // result of this call
   options: {
-    custom: 'test' // custom data
+    custom: 'test'                  // custom data
   }
 }
 ```

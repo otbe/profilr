@@ -68,7 +68,7 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[ 0 ].arguments[ 0 ]).toInclude({ label: 'simple', result: 5 });
+    expect(listener.calls[ 0 ].arguments[ 0 ]).toInclude({ fnName: 'simple', result: 5 });
 
     listener.reset();
 
@@ -78,7 +78,7 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[0].arguments[0]).toInclude({ label: 'other', result: 5 });
+    expect(listener.calls[0].arguments[0]).toInclude({ fnName: 'named', label: 'other', result: 5 });
 
     listener.reset();
 
@@ -88,7 +88,7 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[0].arguments[0]).toInclude({ label: 'other', result: 5, options });
+    expect(listener.calls[0].arguments[0]).toInclude({ fnName: 'namedAndCustomized', label: 'other', result: 5, options });
 
     listener.reset();
 
@@ -98,7 +98,7 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[0].arguments[0]).toInclude({ label: 'customOptions', result: 5, options });
+    expect(listener.calls[0].arguments[0]).toInclude({ fnName: 'customOptions', result: 5, options });
   });
 
   it('should let me decorate async class methods', async () => {
@@ -111,7 +111,7 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[ 0 ].arguments[ 0 ]).toInclude({ label: 'asyncFn', result: 5 });
+    expect(listener.calls[ 0 ].arguments[ 0 ]).toInclude({ fnName: 'asyncFn', result: 5 });
   });
 
   it('should let me profile a ordinary function', async () => {
@@ -124,7 +124,7 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[0].arguments[0]).toInclude({ label: 'anonymous function', result: 5 });
+    expect(listener.calls[0].arguments[0]).toInclude({ result: 5 });
 
     listener.reset();
 
@@ -148,7 +148,7 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[0].arguments[0]).toInclude({ label: 'myFn', result: 5 });
+    expect(listener.calls[0].arguments[0]).toInclude({ fnName: 'myFn', result: 5 });
 
     listener.reset();
 
@@ -160,7 +160,7 @@ describe('profilr@TS', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[0].arguments[0]).toInclude({ label: 'anonymous function', result: 5, options });
+    expect(listener.calls[0].arguments[0]).toInclude({ result: 5, options });
 
     listener.reset();
 
@@ -200,6 +200,33 @@ describe('profilr@TS', () => {
     expect(listener).toNotHaveBeenCalled();
 
     listener.reset();
+  });
+
+  it('should generate unique ids for each invocation of profile', async () => {
+    expect(listener).toNotHaveBeenCalled();
+    const fn = profile(() => 5);
+    const fn2 = profile(() => 5);
+
+    fn();
+    fn2();
+
+    await process();
+
+    const idFn = listener.calls[ 1 ].arguments[ 0 ].id;
+    const idFn2 = listener.calls[ 0 ].arguments[ 0 ].id;
+
+    expect(listener).toHaveBeenCalled();
+    expect(idFn).toNotBe(idFn2);
+
+    listener.reset();
+
+    fn();
+    fn2();
+
+    await process();
+
+    expect(listener.calls[ 1 ].arguments[ 0 ].id).toBe(idFn);
+    expect(listener.calls[ 0 ].arguments[ 0 ].id).toBe(idFn2);
   });
 
   it('should let me dispose the listener', async () => {

@@ -1,7 +1,14 @@
 import { ProfileOptions } from './api';
+
 export interface State {
   enabled: boolean;
   listeners: Array<EventCallback>;
+}
+
+let id: number = 0;
+
+export function getNextId(): number {
+  return ++id;
 }
 
 export const state: State = {
@@ -10,6 +17,8 @@ export const state: State = {
 };
 
 export interface PerformanceEvent {
+  id: number,
+  fnName: string,
   label: string;
   duration: number;
   result: any;

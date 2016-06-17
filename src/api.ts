@@ -1,4 +1,4 @@
-import { state, processEvent } from './state';
+import { state, processEvent, getNextId } from './state';
 import { isFunction, isPromise } from './utils';
 
 export const UNSUPPORTED_CALL_SIGNATURE_ERROR = 'Unsupported call signature. Please check API docs.';
@@ -21,36 +21,38 @@ export function profile (label: string): (target: any, propertyKey: string, desc
 export function profile (): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 
 export function profile (arg1?: any, arg2?: any, arg3?: any): any {
+  const id = getNextId();
+
   switch (arguments.length) {
     case 0:
-      return makeDecorator(null);
+      return makeDecorator(id, null);
     case 1:
       if (typeof arg1 === 'function') {
-        return executeWrapped(arg1, null);
+        return executeWrapped(id, arg1, null);
       } else if (typeof arg1 === 'string') {
-        return makeDecorator(arg1);
+        return makeDecorator(id, arg1);
       } else if (typeof arg1 === 'object') {
-        return makeDecorator(null, arg1);
+        return makeDecorator(id, null, arg1);
       }
 
       throw new Error(UNSUPPORTED_CALL_SIGNATURE_ERROR);
     case 2:
       if (typeof arg1 === 'string') {
         if (typeof arg2 === 'object') {
-          return makeDecorator(arg1, arg2);
+          return makeDecorator(id, arg1, arg2);
         }
       } else if (typeof arg1 === 'function') {
         if (typeof arg2 === 'string') {
-          return executeWrapped(arg1, arg2, null);
+          return executeWrapped(id, arg1, arg2, null);
         } else if (typeof arg2 === 'object') {
-          return executeWrapped(arg1, null, arg2);
+          return executeWrapped(id, arg1, null, arg2);
         }
       }
 
       throw new Error(UNSUPPORTED_CALL_SIGNATURE_ERROR);
     case 3:
       if (typeof arg1 === 'function' && typeof arg2 === 'string' && typeof arg3 === 'object') {
-        return executeWrapped(arg1, arg2, arg3);
+        return executeWrapped(id, arg1, arg2, arg3);
       }
 
       throw new Error(UNSUPPORTED_CALL_SIGNATURE_ERROR);
@@ -59,7 +61,7 @@ export function profile (arg1?: any, arg2?: any, arg3?: any): any {
   }
 }
 
-function makeDecorator (label: string, options?: ProfileOptions) {
+function makeDecorator (id: number, label: string, options?: ProfileOptions) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor => {
     let fn = target[ propertyKey ];
 
@@ -76,31 +78,33 @@ function makeDecorator (label: string, options?: ProfileOptions) {
         }
 
         return function() {
-          return measure(label || propertyKey, fn, this, arguments, options);
+          return measure(id, propertyKey, label, fn, this, arguments, options);
         }
       }
     };
   }
 }
 
-function executeWrapped<T extends Function> (fn: T, label: string, options?: ProfileOptions) {
+function executeWrapped<T extends Function> (id: number, fn: T, label: string, options?: ProfileOptions) {
   return function() {
     if (!state.enabled) {
       return fn.apply(this, arguments);
     }
 
-    return measure(label || fn.name || 'anonymous function', fn, this, arguments, options);
+    return measure(id, fn.name, label, fn, this, arguments, options);
   }
 }
 
-function measure (key: string, fn: Function, context: Object, args: IArguments, options: ProfileOptions): any {
+function measure (id: number, fnName: string, label: string, fn: Function, context: Object, args: IArguments, options: ProfileOptions): any {
   const start = new Date().getTime();
   const result = fn.apply(context, args);
 
   if (result != null && isPromise(result)) {
     result.then((res: any) => {
       processEvent({
-        label: key,
+        id,
+        fnName,
+        label,
         duration: new Date().getTime() - start,
         result: res,
         options
@@ -109,7 +113,9 @@ function measure (key: string, fn: Function, context: Object, args: IArguments, 
     });
   } else {
     processEvent({
-      label: key,
+      id,
+      fnName,
+      label,
       duration: new Date().getTime() - start,
       result: result,
       options

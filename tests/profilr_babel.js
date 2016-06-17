@@ -37,7 +37,7 @@ describe('profilr@Babel', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[ 0 ].arguments[ 0 ]).toInclude({ label: 'simple', result: 5 });
+    expect(listener.calls[ 0 ].arguments[ 0 ]).toInclude({ fnName: 'simple', result: 5 });
   });
 
   it('should let me decorate and label class methods', async () => {
@@ -50,7 +50,7 @@ describe('profilr@Babel', () => {
     await process();
 
     expect(listener).toHaveBeenCalled();
-    expect(listener.calls[ 0 ].arguments[ 0 ]).toInclude({ label: 'other', result: 5 });
+    expect(listener.calls[ 0 ].arguments[ 0 ]).toInclude({ fnName: 'named', label: 'other', result: 5 });
   });
 
   it('should work with context', () => {
