@@ -52,8 +52,8 @@ All functions are available at the top level import.
 
 ###useProfilr
 ```useProfilr(active: boolean)```
-Enables or disable *profilr*. The decorated or wrapped functions will still have some logic from *profilr*, but the overhead
-is negligible.
+Enables or disables *profilr*. The decorated or wrapped functions will still have some logic from *profilr*, but the overhead
+is negligible. *profilr* is enabled by default.
 
 ###profile
 Function wrappers:
