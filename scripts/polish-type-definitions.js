@@ -4,7 +4,6 @@ var EOL = require('os').EOL;
 var typeDefinitions = fs.readFileSync('dist/profilr.d.ts', { encoding: 'utf-8' });
 typeDefinitions = typeDefinitions.split(EOL);
 
-var imports = [];
 var exports = [];
 
 for(var i = 0; i < typeDefinitions.length; i++) {
@@ -27,22 +26,18 @@ for(var i = 0; i < typeDefinitions.length; i++) {
     exports.push(i);
   }
 
+  // ignore imports
   if(typeDefinitions[i].indexOf('import') === 0) {
-    imports.push(i);
+    typeDefinitions[i] = '';
   }
 }
 
 var result = [];
 
 for(i = 0; i < typeDefinitions.length; i++) {
-  if(imports.indexOf(i) === -1 && exports.indexOf(i) === -1 && typeDefinitions[i].length > 0) {
+  if(exports.indexOf(i) === -1 && typeDefinitions[i].length > 0) {
     result.push(typeDefinitions[i]);
   }
-}
-
-// push imports to the top
-for(i = 0; i < imports.length; i++) {
-  result.unshift(typeDefinitions[imports[i]]);
 }
 
 // push exports to the bottom
