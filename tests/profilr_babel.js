@@ -53,6 +53,26 @@ describe('profilr@Babel', () => {
     expect(listener.calls[ 0 ].arguments[ 0 ]).toInclude({ label: 'other', result: 5 });
   });
 
+  it('should work with context', () => {
+    (function() {
+      let _this = this;
+
+      profile(() => {
+        expect(this).toBe(_this);
+      })();
+
+      profile(function () {
+        expect(this).toNotBe(_this);
+      })();
+
+      let newContext = {};
+
+      profile(function() {
+        expect(this).toBe(newContext);
+      }).call(newContext);
+    }).call({});
+  });
+
   it('should throw if a @profile decorated field is not a method', () => {
     expect(() => {
       class Test {

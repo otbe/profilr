@@ -14,7 +14,7 @@ You have to add a consumer for this events. See the ```Consumers``` section.
 ```npm i profilr --save```
 
 ##Usage
-Its written in TypeScript and typings are available. It can be used with TypeScript decorators and babel decorators.
+*profilr* is written in TypeScript and typings are available. It can be used with TypeScript decorators, babel decorators and as a function wrapper.
 
 ```javascript
 import { profile, useProfilr } from 'profilr';
@@ -45,18 +45,23 @@ See tests for more usage information.
 
 ##Consumers
 First consumer will be a react devtool like known from redux and mobx, but its not finished yet.
+
 Stay tuned!
 
 ##API
 All functions are available at the top level import.
 
 ###useProfilr
-```useProfilr(active: boolean)```
+```
+useProfilr(active: boolean)
+```
 Enables or disables *profilr*. The decorated or wrapped functions will still have some logic from *profilr*, but the overhead
 is negligible. *profilr* is enabled by default.
 
 ###profile
-Function wrappers:
+```profile``` is a function wrapper or class method decorator which can be used to profile your function calls.
+
+Function wrapper signatures:
 ```javascript
 function profile<T extends Function> (fn: T): T;
 function profile<T extends Function> (fn: T, label: string): T;
@@ -64,30 +69,25 @@ function profile<T extends Function> (fn: T, options: ProfileOptions): T;
 function profile<T extends Function> (fn: T, label: string, options: ProfileOptions): T;
 ```
 
-Parameter | Description
------------- | -------------
-```fn``` | Function to be profiled
-```label``` | String that will be used to identify the function. In most cases this needed, but *profilr* will try to infer this from the function name.
-```options``` | Configuration object. For now it only holds a ```custom``` field, which can be used to send custom data to a consumer.
-
 Class method decorators:
 ```javascript
 function profile (): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 function profile (label: string): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 function profile (options: ProfileOptions): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 function profile (label: string, options: ProfileOptions): (target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
-
 ```
 
-Same as for function wrappers, but this time ```label``` is not needed at most times, because *profilr* will infer this
-from the method name.
-
+Parameter | Description
+------------ | -------------
+```fn``` | Function to be profiled
+```label``` | String that will be used to identify the function. In most cases this needed, but *profilr* will try to infer this from the function name.
+```options``` | Configuration object. For now it only holds a ```custom``` field, which can be used to send custom data to a consumer.
 ###registerEventCallback
 ```
 function registerEventCallback(cb: EventCallback): () => void
 ```
-Registers a callback for events produced by *profilr*. The object thats passed to this callback,
-looks like this example:
+Registers a callback for events produced by *profilr*. It returns a dispose function.
+Only one parameter will be passed to the callback and it looks like this example:
 
 ```
 {
