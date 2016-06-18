@@ -23,20 +23,20 @@ useProfilr(true);
 
 class MyService {
   constructor() {
-    // will be reported as 'getNumberOfRows'
+    // fnName will be an empty string, but events will be labeled with 'getNumberOfRows'
     const getNumberOfRows = profile(() => 5, 'getNumberOfRows');
 
-    // will be reported as 'getNumberOfColumns'
+    // fnName will be 'getNumberOfColumns'
     const getNumberOfColumns = profile(function getNumberOfColumns() { return 5 });
   }
 
-  @profile() // will be reported as 'expensiveComputation'
+  @profile() // fnName will be 'expensiveComputation'
   expensiveComputation (): number {
     return 1*1;
   }
 
-  @profile('fetchUsers', { custom: 'foo' }) // will be reported as 'fetchUsers' and with custom data
-  remoteApiCall (): number {
+  @profile({ custom: 'foo' }) // fnName will be 'remoteApiCall'
+  remoteApiCall (): Promise<number> {
     return new Promise((resolve) => resolve(5));
   }
 }
@@ -94,7 +94,7 @@ Only one parameter will be passed to the callback and it looks like this example
   id: 1,                            // each profiled function has an unique id
   fnName: 'map',                    // inferred name of function
   label: 'Part of Array prototype', // label
-  duration: 50,                     // duraiton in ms
+  duration: 50,                     // duration in ms
   result: [],                       // result of this call
   options: {
     custom: 'test'                  // custom data
