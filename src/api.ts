@@ -1,6 +1,8 @@
 import { state, processEvent, getNextId } from './state';
 import { isFunction, isPromise } from './utils';
 
+const FN_KEY: Symbol = <Symbol>Symbol();
+
 export const UNSUPPORTED_CALL_SIGNATURE_ERROR = 'Unsupported call signature. Please check API docs.';
 export const TARGET_MUST_BE_A_FUNCTION = 'Only class methods can be decorated.';
 
@@ -63,9 +65,9 @@ export function profile (arg1?: any, arg2?: any, arg3?: any): any {
 
 function makeDecorator (id: number, label: string, options?: ProfileOptions) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor => {
-    let fn = target[ propertyKey ];
+    let originalFn = Reflect.get(target, propertyKey);
 
-    if (!isFunction(fn)) {
+    if (!isFunction(originalFn)) {
       throw new Error(TARGET_MUST_BE_A_FUNCTION);
     }
 
@@ -73,6 +75,12 @@ function makeDecorator (id: number, label: string, options?: ProfileOptions) {
       configurable: descriptor.configurable,
       enumerable: descriptor.enumerable,
       get: function getter () {
+        if(!Reflect.hasMetadata(FN_KEY, this, propertyKey)) {
+          Reflect.defineMetadata(FN_KEY, originalFn, this, propertyKey);
+        }
+
+        const fn = Reflect.getMetadata(FN_KEY, this, propertyKey);
+
         if (!state.enabled) {
           return fn;
         }
@@ -80,6 +88,13 @@ function makeDecorator (id: number, label: string, options?: ProfileOptions) {
         return function() {
           return measure(id, propertyKey, label, fn, this, arguments, options);
         }
+      },
+      set: function setter(newVal) {
+        if (!isFunction(newVal)) {
+          throw new Error(TARGET_MUST_BE_A_FUNCTION);
+        }
+
+        Reflect.defineMetadata(FN_KEY, newVal, this, propertyKey);
       }
     };
   }

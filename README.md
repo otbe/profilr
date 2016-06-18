@@ -103,4 +103,5 @@ Only one parameter will be passed to the callback and it looks like this example
 ```
 
 ##Dependencies
-*profilr* comes without dependencies :)
+*profilr* comes without dependencies, but it needs a [Reflect Metadata API](https://www.npmjs.com/package/reflect-metadata) polyfill.
+This is also a peer dependency.

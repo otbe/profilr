@@ -101,6 +101,21 @@ describe('profilr@TS', () => {
     expect(listener.calls[0].arguments[0]).toInclude({ fnName: 'customOptions', result: 5, options });
   });
 
+  it('should let me redefine a decorated class method', async () => {
+    expect(listener).toNotHaveBeenCalled();
+
+    const test = new Test();
+
+    test.simple = () => 10;
+
+    expect(test.simple()).toBe(10);
+
+    await process();
+
+    expect(listener).toHaveBeenCalled();
+    expect(listener.calls[ 0 ].arguments[ 0 ]).toInclude({ fnName: 'simple', result: 10 });
+  });
+
   it('should let me decorate async class methods', async () => {
     expect(listener).toNotHaveBeenCalled();
 

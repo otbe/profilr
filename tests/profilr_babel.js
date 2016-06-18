@@ -82,6 +82,11 @@ describe('profilr@Babel', () => {
 
       new Test();
     }).toThrow(TARGET_MUST_BE_A_FUNCTION);
+
+    expect(() => {
+      const test = new Test();
+      test.named = 10;
+    }).toThrow(TARGET_MUST_BE_A_FUNCTION);
   });
 
   it('should throw if @profile is called with a unsupported signature', () => {
