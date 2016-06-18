@@ -1,6 +1,6 @@
 {
   "name": "profilr",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "tiny profiling library",
   "main": "dist/profilr.js",
   "typings": "dist/profilr.d.ts",
