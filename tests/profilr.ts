@@ -106,14 +106,14 @@ describe('profilr@TS', () => {
 
     const test = new Test();
 
+    // note: if you do something like this, profilr is not longer involved
     test.simple = () => 10;
 
     expect(test.simple()).toBe(10);
 
     await process();
 
-    expect(listener).toHaveBeenCalled();
-    expect(listener.calls[ 0 ].arguments[ 0 ]).toInclude({ fnName: 'simple', result: 10 });
+    expect(listener).toNotHaveBeenCalled();
   });
 
   it('should let me decorate async class methods', async () => {

@@ -75,25 +75,19 @@ function makeDecorator (id: number, label: string, options?: ProfileOptions) {
       configurable: descriptor.configurable,
       enumerable: descriptor.enumerable,
       get: function getter () {
-        if(!Reflect.hasMetadata(FN_KEY, this, propertyKey)) {
-          Reflect.defineMetadata(FN_KEY, originalFn, this, propertyKey);
+        if(Reflect.hasMetadata(FN_KEY, this, propertyKey)) {
+          return Reflect.getMetadata(FN_KEY, this, propertyKey);
         }
 
-        const fn = Reflect.getMetadata(FN_KEY, this, propertyKey);
-
         if (!state.enabled) {
-          return fn;
+          return originalFn;
         }
 
         return function() {
-          return measure(id, propertyKey, label, fn, this, arguments, options);
+          return measure(id, propertyKey, label, originalFn, this, arguments, options);
         }
       },
       set: function setter(newVal) {
-        if (!isFunction(newVal)) {
-          throw new Error(TARGET_MUST_BE_A_FUNCTION);
-        }
-
         Reflect.defineMetadata(FN_KEY, newVal, this, propertyKey);
       }
     };
