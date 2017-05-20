@@ -1,4 +1,5 @@
-#profilr
+# profilr
+
 [![Build Status](https://travis-ci.org/otbe/profilr.svg?branch=master)](https://travis-ci.org/otbe/profilr)
 [![Coverage Status](https://coveralls.io/repos/github/otbe/profilr/badge.svg?branch=master)](https://coveralls.io/github/otbe/profilr?branch=master)
 
@@ -9,11 +10,11 @@ It tries to add as less as possible overhead to the decorated or wrapped functio
 Basically *profilr* is unoptionated in what you're doing with this events. It does not log or evaluate something.
 You have to add a consumer for this events. See the ```Consumers``` section.
 
-##Install
+## Install
 
 ```npm i profilr --save```
 
-##Usage
+## Usage
 *profilr* is written in TypeScript and typings are available. It can be used with TypeScript decorators, babel decorators and as a function wrapper.
 
 ```javascript
@@ -43,22 +44,22 @@ class MyService {
 ```
 See tests for more usage information.
 
-##Consumers
+## Consumers
 First consumer will be a react devtool like known from redux and mobx, but its not finished yet.
 
 Stay tuned!
 
-##API
+## API
 All functions are available at the top level import.
 
-###useProfilr
+### useProfilr
 ```
 useProfilr(active: boolean)
 ```
 Enables or disables *profilr*. The decorated or wrapped functions will still have some logic from *profilr*, but the overhead
 is negligible. *profilr* is enabled by default.
 
-###profile
+### profile
 ```profile``` is a function wrapper or class method decorator which can be used to profile your function calls.
 
 Function wrapper signatures:
@@ -82,7 +83,8 @@ Parameter | Description
 ```fn``` | Function to be profiled
 ```label``` | Consumers can group several functions based on this string.
 ```options``` | Configuration object. For now it only holds a ```custom``` field, which can be used to send custom data to a consumer.
-###registerEventCallback
+
+### registerEventCallback
 ```
 function registerEventCallback(cb: EventCallback): () => void
 ```
@@ -102,6 +104,6 @@ Only one parameter will be passed to the callback and it looks like this example
 }
 ```
 
-##Dependencies
+## Dependencies
 *profilr* comes without dependencies, but it needs a [Reflect Metadata API](https://www.npmjs.com/package/reflect-metadata)
 polyfill if your environment does not support it.
