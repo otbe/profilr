@@ -3,6 +3,7 @@ node_js:
   - '6'
 cache: yarn
 install:
+  - yarn
   - chmod +x scripts/*.sh
 script: npm run test-travis
 after_success:
