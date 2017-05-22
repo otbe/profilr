@@ -1,11 +1,12 @@
 var webpack = require('webpack');
+var path = require('path');
 
 module.exports = {
   entry: [
     './src/profilr.ts'
   ],
   output: {
-    path: './generated',
+    path: path.join(__dirname, 'generated'),
     filename: 'profilr.js',
     library: 'profilr',
     libraryTarget: 'umd'
@@ -24,7 +25,6 @@ module.exports = {
   ],
   resolve: {
     // Add `.ts` and `.tsx` as a resolvable extension.
-    extensions: [ '', '.ts', '.js' ],
-    modulesDirectories: [ 'node_modules' ]
+    extensions: [ '.ts', '.js' ]
   }
 };

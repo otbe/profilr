@@ -1,4 +1,5 @@
 var conf = require('./webpack.config');
+var path = require('path');
 
 conf.devtool = 'inline-source-map';
 
@@ -7,12 +8,6 @@ conf.externals = {
   'fs': 'commonjs fs',
   'expect': 'commonjs expect',
   'babel-polyfill': 'commonjs babel-polyfill'
-};
-
-conf.ts = {
-  compilerOptions: {
-    declaration: false
-  }
 };
 
 conf.entry = [
@@ -29,7 +24,7 @@ conf.module.loaders.push(
 
 
 conf.output = {
-  path: './generated',
+  path: path.join(__dirname, 'generated'),
   devtoolModuleFilenameTemplate: './[resource-path]',
   filename: 'tests.js',
 
