@@ -1,7 +1,7 @@
 language: node_js
 node_js:
   - '6'
- cache: yarn
+cache: yarn
 install:
   - chmod +x scripts/*.sh
 script: npm run test-travis
